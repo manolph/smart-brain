@@ -32,7 +32,7 @@ class Register extends React.Component {
     }  
     
     onSubmitRegister = () => {
-        fetch('http://localhost:3000/register', {
+        fetch('https://enigmatic-brushlands-54426.herokuapp.com/register', {
             method: 'post',
             headers: { "Content-Type" : "Application/Json" },
             body: JSON.stringify({
@@ -52,7 +52,7 @@ class Register extends React.Component {
     }     
 
     render () {
-        console.log(this.state);
+        
         return (
             <div className='center'>
                  <article className="br3 ba b--black-10 shadow-5 mv4 w-100 w-50-m w-25-l mw6 center">
