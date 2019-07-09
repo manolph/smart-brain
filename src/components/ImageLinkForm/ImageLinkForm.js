@@ -16,6 +16,11 @@ const ImageLinkForm = ({ onUserInput, onButtonSubmit }) => {
                     <button className='f4 w-30 grow link ph3 pv2 dib white bg-light-purple pointer' 
                         onClick={onButtonSubmit}>Detect</button>
                 </div>
+                <div>
+                    <p className="f5 white">
+                {'Created By: MANOL SHARMA'}
+                    </p>
+                </div>
            </div>
         </div>
     );
