@@ -15,11 +15,13 @@ const ImageLinkForm = ({ onUserInput, onButtonSubmit }) => {
                     <input className='f4 pa2 w-70 center' type='text' onChange={onUserInput} />
                     <button className='f4 w-30 grow link ph3 pv2 dib white bg-light-purple pointer' 
                         onClick={onButtonSubmit}>Detect</button>
-                    <p className="f5 white">
-                        {'Created By: MANOL SHARMA'}
-                    </p>
                 </div>
            </div>
+           <div className="center">
+                    <p className="f5 white center ma2">
+                        {'Created By: MANOL SHARMA'}
+                    </p>
+            </div>
         </div>
     );
 }
