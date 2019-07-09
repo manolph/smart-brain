@@ -15,7 +15,7 @@ import './App.css';
 const initialState = {
   input : '',
   imageURL: '',
-  box: {},
+  boxes: [],
   route: 'signin',
   isSignedIn: false,
   isProfileOpen: false,
@@ -113,27 +113,29 @@ class App extends Component {
   }
 
 
-  calculateFaceLocation = (data) => {
+  calculateFacesLocation = (data) => {
     if(data && data.outputs) {
-      const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-      const image = document.getElementById('inputImage');
-      const width = Number(image.width);
-      const height = Number(image.height);
-      console.log(data);
-      return {
-        leftCol: clarifaiFace.left_col * width ,
-        topRow: clarifaiFace.top_row * height ,
-        rightCol: width - (clarifaiFace.right_col * width) ,
-        bottomRow: height - (clarifaiFace.bottom_row * height)
-      }
+       return data.outputs[0].data.regions.map(face => {
+        const clarifaiFace = face.region_info.bounding_box;
+        const image = document.getElementById('inputImage');
+        const width = Number(image.width);
+        const height = Number(image.height);
+        console.log(data);
+        return {
+          leftCol: clarifaiFace.left_col * width ,
+          topRow: clarifaiFace.top_row * height ,
+          rightCol: width - (clarifaiFace.right_col * width) ,
+          bottomRow: height - (clarifaiFace.bottom_row * height)
+        }
+       })
     }
     return;
   }
 
   
-  displayFaceBox = (box) => {
-    if(box) {
-      return this.setState({ box: box })
+  displayFaceBox = (boxes) => {
+    if(boxes) {
+      return this.setState({ boxes: boxes })
     }
   }
 
@@ -174,12 +176,12 @@ class App extends Component {
           })
           .catch(err => console.log(err))
         }
-        this.displayFaceBox(this.calculateFaceLocation(response))})
+        this.displayFaceBox(this.calculateFacesLocation(response))})
         .catch(err => console.log(err));
   }
 
   render() {
-    const { imageURL, box, isSignedIn, route, user, isProfileOpen} = this.state;
+    const { imageURL, boxes, isSignedIn, route, user, isProfileOpen} = this.state;
     return (
       <div className="App">
         <Particles className= "particles"
@@ -204,7 +206,7 @@ class App extends Component {
             <ImageLinkForm 
               onUserInput={this.onUserInput}
               onButtonSubmit={this.onButtonSubmit}/>
-            <FaceRecognition box={box} imageURL={imageURL}/>
+            <FaceRecognition boxes={boxes} imageURL={imageURL}/>
           </div> 
           : 
             (  route === 'signin' ?
