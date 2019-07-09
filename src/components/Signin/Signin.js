@@ -22,8 +22,12 @@ onPasswordInputChange = (event)  => {
     })
 }  
 
+saveAuthTokenInSessions = (token) => { 
+    return window.sessionStorage.setItem('token', token);
+}
+
 onSubmitSignin = () => {
-    fetch('https://enigmatic-brushlands-54426.herokuapp.com/signin', {
+    fetch('http://localhost:3000/signin', {
         method: 'post',
         headers: { "Content-Type" : "Application/Json" },
         body: JSON.stringify({
@@ -32,11 +36,24 @@ onSubmitSignin = () => {
         })
     })
     .then(resp => resp.json())
-    .then(user => {
-        if(user.id && user.email ) {
-            this.props.loadUser(user)
-            this.props.onRouteChange('home')
-        }
+    .then(data => {
+        if(data.userId && data.success === 'true' ) {
+            this.saveAuthTokenInSessions(data.token)
+            fetch(`http://localhost:3000/profile/${data.userId}`, {
+                method: 'get',
+                headers: { 
+                "Content-Type" : "Application/Json",
+                "Authorization" : data.token
+                }
+            })
+                .then(resp => resp.json())
+                .then(user => {
+                    if(user.id && user.email ){
+                        this.props.loadUser(user)
+                        this.props.onRouteChange('home')
+                    }
+                    })
+            }
         })
     .catch(err => console.log(err))
 }     

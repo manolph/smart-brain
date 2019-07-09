@@ -31,19 +31,25 @@ class Profile extends React.Component {
     }
 
     onProfileUpdate = (data) => {
-        fetch(`https://enigmatic-brushlands-54426.herokuapp.com/profile/${this.props.user.id}`, {
-            method: 'post',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ formInput: data })
-            })
-            .then(resp => {
-                if(resp.status === 200 || resp.status === 304) {
-                    this.props.toggleModal();
-                    this.props.loadUser({ ...this.props.user, ...data})
-                }
-            })
-            .catch(console.log);
-         }
+       if(data.name) {
+            return fetch(`http://localhost:3000/profile/${this.props.user.id}`, {
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization' : window.sessionStorage.getItem('token')
+                    },
+                    body: JSON.stringify({ formInput: data })
+                    })
+                    .then(resp => {
+                        if(resp.status === 200 || resp.status === 304) {
+                            this.props.toggleModal();
+                            this.props.loadUser({ ...this.props.user, ...data})
+                        }
+                    })
+                    .catch(console.log) 
+                } else {window.alert('please fill all the form fields.')};  
+        } 
+       
 
     render() {
         const { user } = this.props;

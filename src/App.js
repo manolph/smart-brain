@@ -49,6 +49,39 @@ class App extends Component {
     this.state = initialState
   }
 
+  componentDidMount() {
+    const token = window.sessionStorage.getItem('token');
+    if(token) {
+      fetch('http://localhost:3000/signin', {
+        method: 'post',
+        headers: { 
+          "Content-Type" : "Application/Json",
+          "Authorization": token
+        }
+      })
+      .then(resp => resp.json())
+      .then(data => {
+        if(data && data.id) {
+          fetch(`http://localhost:3000/profile/${data.id}`, {
+        method: 'get',
+        headers: { 
+          "Content-Type" : "Application/Json",
+          "Authorization" : token
+        }
+    })
+        .then(resp => resp.json())
+        .then(user => {
+            if(user.id && user.email ){
+                this.loadUser(user)
+                this.onRouteChange('home')
+              }
+            })
+          }
+        })
+        .catch(console.log)
+    }
+  }  
+
   loadUser = (data) => {
     this.setState({ ...this.state.user, user: {
     id: data.id,
@@ -61,6 +94,7 @@ class App extends Component {
     }
   })
   }
+
 
   onRouteChange = (route) => {
     if(route === 'signin') {
@@ -80,23 +114,27 @@ class App extends Component {
 
 
   calculateFaceLocation = (data) => {
-    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
-    const image = document.getElementById('inputImage');
-    const width = Number(image.width);
-    const height = Number(image.height);
-    
-    return {
-      leftCol: clarifaiFace.left_col * width ,
-      topRow: clarifaiFace.top_row * height ,
-      rightCol: width - (clarifaiFace.right_col * width) ,
-      bottomRow: height - (clarifaiFace.bottom_row * height)
+    if(data && data.outputs) {
+      const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+      const image = document.getElementById('inputImage');
+      const width = Number(image.width);
+      const height = Number(image.height);
+      console.log(data);
+      return {
+        leftCol: clarifaiFace.left_col * width ,
+        topRow: clarifaiFace.top_row * height ,
+        rightCol: width - (clarifaiFace.right_col * width) ,
+        bottomRow: height - (clarifaiFace.bottom_row * height)
+      }
     }
+    return;
   }
 
   
   displayFaceBox = (box) => {
-    this.setState({ box: box })
-    
+    if(box) {
+      return this.setState({ box: box })
+    }
   }
 
 
@@ -107,10 +145,11 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({ imageURL: this.state.input });
-      fetch('https://enigmatic-brushlands-54426.herokuapp.com/imageurl', {
+      fetch('http://localhost:3000/imageurl', {
         method: 'post',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          "Authorization" : window.sessionStorage.getItem('token')
         },
         body: JSON.stringify({
           input: this.state.input
@@ -119,9 +158,12 @@ class App extends Component {
       .then(response => response.json())
       .then(response => {
         if(response){
-          fetch('https://enigmatic-brushlands-54426.herokuapp.com/image', {
+          fetch('http://localhost:3000/image', {
             method: 'put',
-            headers: { "Content-Type" : "Application/Json" },
+            headers: { 
+              "Content-Type" : "Application/Json",
+              "Authorization" : window.sessionStorage.getItem('token')
+            },
             body: JSON.stringify({
               id: this.state.user.id
             })
