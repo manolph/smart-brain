@@ -32,7 +32,7 @@ class Profile extends React.Component {
 
     onProfileUpdate = (data) => {
        if(data.name) {
-            return fetch(`http://localhost:3000/profile/${this.props.user.id}`, {
+            return fetch(`https://enigmatic-brushlands-54426.herokuapp.com/profile/${this.props.user.id}`, {
                     method: 'post',
                     headers: {
                         'Content-Type': 'application/json',

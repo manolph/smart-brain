@@ -27,7 +27,7 @@ saveAuthTokenInSessions = (token) => {
 }
 
 onSubmitSignin = () => {
-    fetch('http://localhost:3000/signin', {
+    fetch('https://enigmatic-brushlands-54426.herokuapp.com/signin', {
         method: 'post',
         headers: { "Content-Type" : "Application/Json" },
         body: JSON.stringify({
@@ -39,7 +39,7 @@ onSubmitSignin = () => {
     .then(data => {
         if(data.userId && data.success === 'true' ) {
             this.saveAuthTokenInSessions(data.token)
-            fetch(`http://localhost:3000/profile/${data.userId}`, {
+            fetch(`https://enigmatic-brushlands-54426.herokuapp.com/profile/${data.userId}`, {
                 method: 'get',
                 headers: { 
                 "Content-Type" : "Application/Json",
